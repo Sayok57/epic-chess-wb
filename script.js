@@ -315,6 +315,7 @@ document.addEventListener('DOMContentLoaded', () => {
             piece.innerHTML = `<img src = "assets/images/${pieceType}.svg">`;
             squares[spawnSpot].appendChild(piece);
             console.log(`current pieceType: ${pieceType}, current square: ${squares[randomSpot]}`)
+
             piece.addEventListener('click', function (e) {
                 scoreCount++;
                 score.innerHTML = `<p> Score: ${scoreCount} </p>`;
@@ -324,6 +325,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 playerSpawner();
             })
+
             for (let j = 0; j < availableSpots.length; j++) {
                 if (spawnSpot == availableSpots[j]) {
                     availableSpots[j] = null;
@@ -335,38 +337,31 @@ document.addEventListener('DOMContentLoaded', () => {
         let availableSpots = getAvailableSpotForSpawn();
         let playerSpot = getPlayerPos();
         let quantityOfSpawn = random(0, 5);
-        let flag = false;
         for (let i = 0; i < quantityOfSpawn; i++) {
+            let flag = true;
             let piece = document.createElement('div');
             let pieceType = pieceTypeOf[random(3, 6)];
             let spawnSpot = random(0, 64);
             if (spawnSpot != playerSpot) {
                 for (let j = 0; j < availableSpots.length; j++) {
-                    if (spawnSpot != availableSpots[j]) {
-                        flag = true;
+                    if (spawnSpot == availableSpots[j]) {
+                        flag = false;
+                        break;
                     }
                 }
             }
             if (flag == true) {
-                for (let j = 0; j < availableSpots.length; j++) {
-                    if (spawnSpot == availableSpots[j]) {
-                        availableSpots[j] = null;
-                    }
-                }
                 piece.className = pieceType;
                 piece.style.transform = `scale(2)`;
                 piece.innerHTML = `<img src = "assets/images/${pieceType}.svg">`;
                 squares[spawnSpot].appendChild(piece);
                 piece.id = "trap";
-                console.log(`current pieceType: ${pieceType}, current square: ${squares[randomSpot]}`)
+                console.log(`current pieceType: ${pieceType}, current square: ${squares[spawnSpot]}`)
                 piece.addEventListener('click', function (e) {
                     console.log('WRONG piece is captured!');
                     alert(`WRONG PIECE IS CAPTURED! You Loose Your Score is: ${scoreCount}`);
                     afterGameOver();
                 })
-            }
-            if (flag == false) {
-                continue;
             }
         }
     }
