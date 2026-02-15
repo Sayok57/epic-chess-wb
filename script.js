@@ -24,7 +24,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 soundtrack.pause();
                 musicButton.style.opacity = 1;
             }
-            musicButton.style.animation = "pressAnim 0.5s";
         })
     }
     let text = document.querySelectorAll('p');
@@ -54,7 +53,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 ui3.forEach(el => el.style.background = "white");
                 ui4.forEach(el => el.style.background = "white");
             }
-            themeButton.style.animation = "pressAnim 0.5s";
         })
     }
     let whiteSquare = document.querySelectorAll('.white-square');
@@ -125,7 +123,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 currentHoverAnim = 4
                 timePressed = 0;
             }
-            skinsButton.style.animation = "pressAnim 0.5s";
         })
     }
     activateSound();
@@ -238,7 +235,6 @@ document.addEventListener('DOMContentLoaded', () => {
         score.innerHTML = `<p> Score: ${scoreCount} </p>`;
     })
     exitButton.addEventListener('click', () => {
-        exitButton.style.animation = "pressAnim 0.5s";
         afterGameOver();
     })
     function afterGameOver() {
