@@ -1,12 +1,15 @@
 @import url('styles/fonts.css');
 @import url('styles/reset.css');
-p{
+
+p {
     user-select: none;
 }
-body{
-    background:rgb(48, 47, 47);
+
+body {
+    background: rgb(48, 47, 47);
 }
-.white-square{
+
+.white-square {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -14,7 +17,8 @@ body{
     height: 50px;
     background: rgb(2, 196, 255);
 }
-.dark-square{
+
+.dark-square {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -22,7 +26,8 @@ body{
     height: 50px;
     background: rgb(157, 242, 255);
 }
-.board{
+
+.board {
     position: relative;
     position: absolute;
     top: 50%;
@@ -31,10 +36,12 @@ body{
     display: flex;
     flex-direction: column;
 }
-.rows{
+
+.rows {
     display: flex;
 }
-.header{
+
+.header {
     display: flex;
     justify-content: space-between;
     width: 100%;
@@ -45,12 +52,14 @@ body{
     padding-left: 40px;
     gap: 300px;
 }
-.circle-buttons-container{
+
+.circle-buttons-container {
     display: flex;
     flex-direction: row;
     gap: 20px;
 }
-.circle-button{
+
+.circle-button {
     cursor: pointer;
     display: flex;
     justify-content: center;
@@ -60,7 +69,8 @@ body{
     height: 96px;
     border-radius: 50%;
 }
-.score-button{
+
+.score-button {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -69,31 +79,36 @@ body{
     width: 300px;
     height: 80px;
     border-radius: 20px;
-    p{
+
+    p {
         font-size: 40px;
     }
 }
-.bottom-buttons-container{
+
+.bottom-buttons-container {
     position: absolute;
     top: 440px;
     left: -10px;
     display: flex;
     gap: 20px;
 }
-.play-button{
+
+.play-button {
     cursor: pointer;
     display: flex;
     justify-content: center;
-    align-items: center; 
+    align-items: center;
     width: 300px;
     height: 70px;
     background: white;
     border-radius: 20px;
-    p{
+
+    p {
         font-size: 40px;
     }
 }
-.settings-button{
+
+.settings-button {
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -103,51 +118,94 @@ body{
     background: white;
     border-radius: 20px;
 }
-@keyframes hoverButtonAnim1{
-    from{
-        
-    }
-    to{
+
+@keyframes hoverButtonAnim1 {
+    from {}
+
+    to {
         background: lightblue;
     }
-    
+
 }
-@keyframes hoverButtonAnim2{
-    from{
-        
-    }
-    to{
+
+@keyframes hoverButtonAnim2 {
+    from {}
+
+    to {
         background: lightcoral;
     }
-    
+
 }
-@keyframes hoverButtonAnim3{
-    from{
-        
-    }
-    to{
+
+@keyframes hoverButtonAnim3 {
+    from {}
+
+    to {
         background: lightgreen;
     }
-    
+
 }
-@keyframes hoverButtonAnim4{
-    from{
-        
-    }
-    to{
+
+@keyframes hoverButtonAnim4 {
+    from {}
+
+    to {
         background: lightyellow;
     }
-    
+
 }
-@keyframes hoverButtonAnim5{
-    from{
-        
-    }
-    to{
+
+@keyframes hoverButtonAnim5 {
+    from {}
+
+    to {
         background: lightpink;
     }
-    
+
+}
+@keyframes pressAnim{
+    from{
+        transform: scale();
+    }
+    50%{
+        transform: scale(1.1);
+    }
+    to{
+        transform: scale();
+    }
+}
+@media (max-width: 768px) {
+    .header {
+        gap: 30px;
+        padding-left: 0px;
+        padding-right: 0px;
+    }
+    .circle-button {
+        width: 60px;
+        height: 60px;
+    }
 }
 
+@media (max-width: 450px) {
+    .header {
+        gap: 20px;
+        padding-left: 0px;
+        padding-right: 0px;
+    }
 
-
+    .circle-button {
+        width: 55px;
+        height: 55px;
+    }
+    .bottom-buttons-container{
+        left: 50px;
+    }
+    .play-button{
+        width: 200px;
+        height: 70px;
+    }
+    .settings-button{
+        width: 70px;
+        height: 70px;
+    }
+}
