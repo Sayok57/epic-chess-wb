@@ -34,15 +34,6 @@ body{
 .rows{
     display: flex;
 }
-.King{
-    transform: scale(2);
-}
-.Rook{
-    transform: scale(2);
-}
-.Bishop{
-    transform: scale(2);
-}
 .header{
     display: flex;
     justify-content: space-between;
@@ -157,5 +148,6 @@ body{
     }
     
 }
+
 
 

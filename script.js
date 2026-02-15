@@ -130,16 +130,114 @@ document.addEventListener('DOMContentLoaded', () => {
     boardColorChange();
     //================================================================================================
 
+    //==================ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ=====================================
+
+    function random(min, max) {
+        return Math.floor(Math.random() * (max - min)) + min;
+    }
+    function getSpot(i, j) {
+        return i * 8 + j;
+    }
+    function getI(index) {
+        return Math.floor(index / 8);
+    }
+    function getJ(index) {
+        return index % 8;
+    }
+    function getAllRookMoves(index) {
+        let i = Math.floor(index / 8);
+        let j = index % 8;
+        let moves = [];
+
+        // Все 4 направления: вверх, вправо, вниз, влево
+        const directions = [
+            [-1, 0], // вверх
+            [0, 1],  // вправо
+            [1, 0],  // вниз
+            [0, -1]  // влево
+        ];
+
+        for (let dir of directions) {
+            let newI = i + dir[0];
+            let newJ = j + dir[1];
+
+            // Двигаемся в направлении, пока не выйдем за доску
+            while (newI >= 0 && newI < 8 && newJ >= 0 && newJ < 8) {
+                moves.push(newI * 8 + newJ);
+                newI += dir[0];
+                newJ += dir[1];
+            }
+        }
+
+        return moves;
+    }
+    function getAllBishopMoves(index) {
+        let i = Math.floor(index / 8);
+        let j = index % 8;
+        let moves = [];
+
+        // Все 4 диагональных направления
+        const directions = [
+            [-1, -1], // вверх-влево
+            [-1, 1],  // вверх-вправо
+            [1, -1],  // вниз-влево
+            [1, 1]    // вниз-вправо
+        ];
+
+        for (let dir of directions) {
+            let newI = i + dir[0];
+            let newJ = j + dir[1];
+
+            // Двигаемся в направлении, пока не выйдем за доску
+            while (newI >= 0 && newI < 8 && newJ >= 0 && newJ < 8) {
+                moves.push(newI * 8 + newJ);
+                newI += dir[0];
+                newJ += dir[1];
+            }
+        }
+
+        return moves;
+    }
+    function getAllKingMoves(index) {
+        let i = Math.floor(index / 8);
+        let j = index % 8;
+        let moves = [];
+
+        // Все 8 направлений движения короля
+        const kingDirections = [
+            [-1, -1], [-1, 0], [-1, 1],
+            [0, -1], [0, 1],
+            [1, -1], [1, 0], [1, 1]
+        ];
+
+        for (let dir of kingDirections) {
+            let newI = i + dir[0];
+            let newJ = j + dir[1];
+
+            // Проверяем, что новая позиция в пределах доски
+            if (newI >= 0 && newI < 8 && newJ >= 0 && newJ < 8) {
+                moves.push(newI * 8 + newJ);
+            }
+        }
+
+        return moves;
+    }
+    //===============================================================================
+
     //=======================ВКЛ/ВЫКЛ ИГРУ================================
     playButton.addEventListener('click', () => {
         isGameOn = true;
         console.log(` Игра началась! ${isGameOn}`);
         playButton.style.display = "none";
         settingsButton.style.display = "none";
+        playerSpawner();
         time();
         score.innerHTML = `<p> Score: ${scoreCount} </p>`;
     })
     exitButton.addEventListener('click', () => {
+        afterGameOver();
+    })
+    function afterGameOver() {
         isGameOn = false;
         console.log(` Игра кончилась! ${isGameOn}`)
         playButton.style.display = "flex";
@@ -152,15 +250,135 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         timeValue = mode;
         score.innerHTML = `<p> ${currentMode} </p>`;
-    })
+        for (let i = 0; i < 64; i++) {
+            squares[i].innerHTML = '';
+        }
+        scoreCount = 0;
+        timer.innerHTML = `<p style="font-size: 30px">${timeValue}</p>`;
+    }
     //============================================================================================
 
-    //==========================ЛОГИКА ИГРЫ===========================
+    //=======================ЛОГИКА ГЕЙМПЛЕЯ=======================================
+    let pieceTypeOf = ["King Player", "Rook Player", "Bishop Player", "King", "Rook", "Bishop", "King Bomb", "Rook Bomb", "Bishop Bomb",];
+    let pieceType = null;
+    let randomSpot = null;
+    let scoreCount = 0;
+    function initializeSquares() {
+        let newSquares = [];
+        for (let i = 0; i < 64; i++) {
+            newSquares[i] = document.querySelector(`#square${i + 1}`);
+        }
+        return newSquares;
+    }
+
+    let squares = initializeSquares();
+
+    function playerSpawner() {
+        let piece = document.createElement('div');
+        pieceType = pieceTypeOf[random(0, 3)];
+        piece.className = pieceType;
+        piece.style.transform = `scale(2)`;
+        piece.style.cursor = "grab";
+        piece.innerHTML = `<img src = "assets/images/${pieceType}.svg">`;
+        randomSpot = random(0, 64);
+        squares[randomSpot].appendChild(piece);
+        console.log(`current pieceType: ${pieceType}, current square: ${squares[randomSpot]}`);
+        createEatiblePieces();
+        createNonEatiblePieces();
+    }
+    function getPlayerPos() {
+        let playerPos = randomSpot;
+        return playerPos
+    }
+    function getAvailableSpotForSpawn() {
+        let availableSpotForSpawn = [];
+        if (pieceType == pieceTypeOf[0]) {
+            availableSpotForSpawn = getAllKingMoves(getPlayerPos());
+        }
+        if (pieceType == pieceTypeOf[1]) {
+            availableSpotForSpawn = getAllRookMoves(getPlayerPos());
+        }
+        if (pieceType == pieceTypeOf[2]) {
+            availableSpotForSpawn = getAllBishopMoves(getPlayerPos());
+        }
+        return availableSpotForSpawn;
+    }
+    function createEatiblePieces() {
+        let availableSpots = getAvailableSpotForSpawn();
+        let quantityOfSpawn = random(1, 4);
+        for (let i = 0; i < quantityOfSpawn; i++) {
+            let spawnSpot = availableSpots[random(0, availableSpots.length)];
+            let piece = document.createElement('div');
+            let pieceType = pieceTypeOf[random(3, 6)];
+            piece.className = pieceType;
+            piece.style.transform = `scale(2)`;
+            piece.innerHTML = `<img src = "assets/images/${pieceType}.svg">`;
+            squares[spawnSpot].appendChild(piece);
+            console.log(`current pieceType: ${pieceType}, current square: ${squares[randomSpot]}`)
+            piece.addEventListener('click', function (e) {
+                scoreCount++;
+                score.innerHTML = `<p> Score: ${scoreCount} </p>`;
+                console.log('piece is captured!');
+                for (let i = 0; i < squares.length; i++) {
+                    squares[i].innerHTML = '';
+                }
+                playerSpawner();
+            })
+            for (let j = 0; j < availableSpots.length; j++) {
+                if (spawnSpot == availableSpots[j]) {
+                    availableSpots[j] = null;
+                }
+            }
+        }
+    }
+    function createNonEatiblePieces() {
+        let availableSpots = getAvailableSpotForSpawn();
+        let playerSpot = getPlayerPos();
+        let quantityOfSpawn = random(0, 5);
+        let flag = false;
+        for (let i = 0; i < quantityOfSpawn; i++) {
+            let piece = document.createElement('div');
+            let pieceType = pieceTypeOf[random(3, 6)];
+            let spawnSpot = random(0, 64);
+            if (spawnSpot != playerSpot) {
+                for (let j = 0; j < availableSpots.length; j++) {
+                    if (spawnSpot != availableSpots[j]) {
+                        flag = true;
+                    }
+                }
+            }
+            if (flag == true) {
+                for (let j = 0; j < availableSpots.length; j++) {
+                    if (spawnSpot == availableSpots[j]) {
+                        availableSpots[j] = null;
+                    }
+                }
+                piece.className = pieceType;
+                piece.style.transform = `scale(2)`;
+                piece.innerHTML = `<img src = "assets/images/${pieceType}.svg">`;
+                squares[spawnSpot].appendChild(piece);
+                piece.id = "trap";
+                console.log(`current pieceType: ${pieceType}, current square: ${squares[randomSpot]}`)
+                piece.addEventListener('click', function (e) {
+                    console.log('WRONG piece is captured!');
+                    alert(`WRONG PIECE IS CAPTURED! You Loose Your Score is: ${scoreCount}`);
+                    afterGameOver();
+                })
+            }
+            if (flag == false) {
+                continue;
+            }
+        }
+    }
+
+
+    //=============================================================================
+
+    //==========================ЛОГИКА ТАЙМЕРА И ВЫБОРА РЕЖИМА===========================
     let timeValue = 10;
     let mode = 10;
     let timeInterval = null;
     let currentMode = "Quick";
-    let scoreCount = 0;
     timer.innerHTML = `<p style="font-size: 30px">${timeValue}</p>`;
     score.innerHTML = `<p> ${currentMode} </p>`
     function modeSelection() {
@@ -193,20 +411,28 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     modeSelection();
     function time() {
-        if (isGameOn == true) {
-            if (timeInterval != null) {
+        if (timeInterval != null) {
+            clearInterval(timeInterval);
+            timeInterval = null;
+        }
+
+        let expectedEnd = Date.now() + (timeValue * 1000);
+
+        timeInterval = setInterval(() => {
+            let remaining = Math.max(0, Math.ceil((expectedEnd - Date.now()) / 1000));
+
+            timer.innerHTML = `<p style="font-size: 30px">${remaining}</p>`;
+            timeValue = remaining;
+
+            console.log(remaining);
+
+            if (remaining <= 0) {
                 clearInterval(timeInterval);
                 timeInterval = null;
+                alert(`TIME IS UP! Your Score is: ${scoreCount}`);
+                afterGameOver();
             }
-            timeInterval = setInterval(() => {
-                timer.innerHTML = `<p style="font-size: 30px">${timeValue}</p>`
-                timeValue--;
-                console.log(timeValue);
-                if (timeValue <= 0) {
-                    clearInterval(timeInterval);
-                    timeInterval = null;
-                }
-            }, 1000)
-        }
+        }, 1000);
     }
+    //==========================================================================
 });
